@@ -1,0 +1,15 @@
+{
+  "name": "angular-portfolio-backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "mariadb": "^3.4.5",
+    "nodemailer": "^6.9.3"
+  }
+}

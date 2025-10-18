@@ -1,0 +1,16 @@
+# Node modules (Backend)
+node_modules/
+# Angular build output
+angular-portfolio/dist/
+# Environment files (avoid uploading sensitive info)
+*.env
+# Logs
+logs/
+*.log
+# IDE/editor files
+.vscode/
+.idea/
+*.sublime-workspace
+# OS specific files
+.DS_Store
+Thumbs.db
