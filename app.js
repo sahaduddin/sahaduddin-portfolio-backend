@@ -1,12 +1,16 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+
 const contactRoutes = require('./routes/contact');
 
 const app = express();
 
 const corsOptions = {
-  origin: process.env.CORS_ORIGIN || '*'
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://sahaduddin.github.io/Sahaduddin-portfolio/']
+    : ['http://localhost:4200', 'http://localhost:3000'],
+  credentials: true
 };
 app.use(cors(corsOptions));
 app.use(express.json());

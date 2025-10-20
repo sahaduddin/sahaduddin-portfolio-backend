@@ -1,14 +1,14 @@
-const mariadb = require('mariadb');
+// const mariadb = require('mariadb');
+const mysql = require('mysql2');  // ✅ ONLY THIS LINE CHANGED
 require('dotenv').config();
 
-const pool = mariadb.createPool({
+const pool = mysql.createPool({
   host: process.env.DB_HOST || 'localhost',
   user: process.env.DB_USER || 'root',
   password: process.env.DB_PASSWORD || '',
   database: process.env.DB_NAME || 'portfolio',
   connectionLimit: parseInt(process.env.DB_CONN_LIMIT, 10) || 5
 });
-
 async function query(sql, params) {
   let conn;
   try {
