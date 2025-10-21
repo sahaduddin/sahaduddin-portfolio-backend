@@ -12,5 +12,11 @@
     "mariadb": "^3.4.5",
     "mysql2": "^3.15.2",
     "nodemailer": "^6.9.3"
-  }
+  },
+  "description": "This project contains a full-stack portfolio with Angular frontend and Node.js backend.",
+  "main": "app.js",
+  "devDependencies": {},
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
