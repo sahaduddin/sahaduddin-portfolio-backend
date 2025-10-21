@@ -36,7 +36,7 @@ app.use((err, req, res, next) => {
 });
 
 // Port setup for Railway or fallback to local 3001
-const port = parseInt(process.env.PORT, 10) || 3001;
+const port = parseInt(process.env.PORT, 10) || 8888;
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });
