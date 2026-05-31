@@ -1,42 +1,61 @@
-require('dotenv').config();
+const env = require('./config/env');
+const logger = require('./config/logger');
 const express = require('express');
 const cors = require('cors');
 
-// Import routes
-const contactRoutes = require('./routes/contact');
+// Import custom middleware layers
+const requestLogger = require('./middlewares/logger.middleware');
+const errorHandler = require('./middlewares/error.middleware');
+const { NotFoundError } = require('./utils/errors');
+
+// Import aggregated API router
+const apiRoutes = require('./routes');
 
 const app = express();
 
-// Advanced CORS logic to handle array or string for origin
-const allowedOrigins = process.env.NODE_ENV === 'production'
-  ? ['https://sahaduddin.github.io/Sahaduddin-portfolio']
-  : ['http://localhost:4200', 'http://localhost:3000'];
+// Advanced CORS policies matching environment
+const corsOrigin = env.corsOrigin;
+const allowedOrigins = corsOrigin === '*'
+  ? null
+  : corsOrigin.split(',').map(origin => origin.trim()).filter(Boolean);
 
 const corsOptions = {
   origin: function (origin, callback) {
-    // Allow requests with no origin (like mobile apps, curl, etc.) or allowed web origins
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+    if (!origin) {
+      return callback(null, true);
     }
+
+    if (corsOrigin === '*') {
+      return callback(null, true);
+    }
+
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+
+    return callback(new Error('Not allowed by CORS'));
   },
-  credentials: true
+  credentials: corsOrigin !== '*'
 };
+
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// Routes
-app.use('/api/contact', contactRoutes);
+// 1. Register HTTP request logging middleware
+app.use(requestLogger);
 
-// Central error handler
-app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'Internal server error' });
+// 2. Mount central index routes at /api
+app.use('/api', apiRoutes);
+
+// 3. Mount 404 handler for undefined routes
+app.use((req, res, next) => {
+  next(new NotFoundError(`Requested endpoint '${req.method} ${req.originalUrl}' does not exist.`));
 });
 
-// Port setup for Railway or fallback to local 3001
-const port = parseInt(process.env.PORT, 10) || 8080;
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// 4. Mount centralized error handling middleware
+app.use(errorHandler);
+
+// Launch Node application
+app.listen(env.port, () => {
+  logger.info(`[Bootstrap] Express Server initialized in [${env.nodeEnv}] mode on port ${env.port}`);
 });
